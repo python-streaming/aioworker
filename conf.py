@@ -20,12 +20,17 @@ LOGGING_CONFIG = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'src.worker': {
+        'aioworker.worker': {
             'handlers': ['default'],
             'level': 'DEBUG',
             'propagate': False,
         },
-        'src.tasks': {  # if __name__ == '__main__'
+        'aioworker.service': {
+            'handlers': ['default'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'aioworker.tasks': {  # if __name__ == '__main__'
             'handlers': ['default'],
             'level': 'DEBUG',
             'propagate': False,

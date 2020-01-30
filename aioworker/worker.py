@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import typing
 
 INIT = 'INIT'
 RUNNING = 'RUNNING'
@@ -10,26 +11,30 @@ logger = logging.getLogger(__name__)
 
 class Worker:
 
-    def __init__(self, loop, task, on_start=None, on_stop=None, timeout=0.1):
+    def __init__(self, tasks: typing.List[typing.Awaitable] = None, timeout=0.1):
         """
         Probably should be a state machine??
         """
-        self.loop = loop
-        self.task = task
+        self._loop = None
+        self.tasks = tasks
         self.timeout = timeout
         self.state = INIT
 
-    async def run(self):
+    @property
+    def loop(self):
+        return self._loop
+
+    def _set_loop(self, loop) -> None:
+        if self._loop is None:
+            self._loop = loop
+
+    async def run(self, loop) -> None:
+        logger.debug('Running worker...')
+        self._set_loop(loop)
         self.state = RUNNING
-        asyncio.ensure_future(self.task)
 
-        # self.loop.run_until_complete(self.task)
-        # self.loop.run_until_complete(consume(self.loop))
-
-        # while self.state == "running":
-        #     print("Worker runnnig...")
-        #     await consume(self.loop)
-        #     await asyncio.sleep(self.timeout)
+        for task in self.tasks:
+            asyncio.ensure_future(task(loop))
 
     async def on_start(self):
         logger.debug('Starting.....')
