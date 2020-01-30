@@ -13,7 +13,7 @@ logging.config.dictConfig(conf.LOGGING_CONFIG)
 
 logger = logging.getLogger(__name__)
 
-BOOTSTRAP_SERVERS = os.getenv('BOOTSTRAP_SERVERS', '0.0.0.0:9092')
+BOOTSTRAP_SERVERS = os.getenv('BOOTSTRAP_SERVERS', '0.0.0.0:29092')
 TOPIC = os.getenv('BOOTSTRAP_SERVERS', 'test-topic-worker')
 GROUP_ID = os.getenv('GROUP_ID', 'test-consumer-group')
 AUTO_OFFSET_RESET = os.getenv('AUTO_OFFSET_RESET', 'earliest')
@@ -42,7 +42,7 @@ async def consume_from_kafka(loop):
 
 async def hello_world(loop):
     while True:
-        print('Hello world...')
+        print('hello world')
         await asyncio.sleep(2)
 
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     logging.config.dictConfig(conf.LOGGING_CONFIG)
 
     Service(Worker(
-        tasks=[hello_world],
+        tasks=[consume_from_kafka, hello_world],
         web_server_config={
             'client_connected_cb': client_connect,
         },
