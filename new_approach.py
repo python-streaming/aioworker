@@ -1,7 +1,15 @@
+import asyncio
 import logging
+import logging.config
 import os
 
 from aiokafka import AIOKafkaConsumer
+
+from aioworker import Service, Worker
+
+import conf
+
+logging.config.dictConfig(conf.LOGGING_CONFIG)
 
 logger = logging.getLogger(__name__)
 
@@ -10,8 +18,6 @@ TOPIC = os.getenv('BOOTSTRAP_SERVERS', 'test-topic-worker')
 GROUP_ID = os.getenv('GROUP_ID', 'test-consumer-group')
 AUTO_OFFSET_RESET = os.getenv('AUTO_OFFSET_RESET', 'earliest')
 
-
-# The tasks must be outside the aio_worker folder
 
 async def consume_from_kafka(loop):
     logger.debug('Task Consuming from kafka initiated...')
@@ -34,7 +40,13 @@ async def consume_from_kafka(loop):
         await consumer.stop()
 
 
-async def tcp_server(reader, writer):
+async def hello_world(loop):
+    while True:
+        print('Hello world...')
+        await asyncio.sleep(2)
+
+
+async def client_connect(reader, writer):
     """
     Read up tp 300 bytes of TCP. This could be parsed usign the HTTP protocol for example
     """
@@ -43,3 +55,15 @@ async def tcp_server(reader, writer):
     writer.write(data)
     await writer.drain()
     writer.close()
+
+
+if __name__ == '__main__':
+    # Run the server using 1 worker processes.
+    logging.config.dictConfig(conf.LOGGING_CONFIG)
+
+    Service(Worker(
+        tasks=[hello_world],
+        web_server_config={
+            'client_connected_cb': client_connect,
+        },
+    )).run(num_workers=1)

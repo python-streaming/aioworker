@@ -10,10 +10,8 @@ logger = logging.getLogger(__name__)
 
 class Service:
 
-    def __init__(self, worker, include_web_server: bool = False) -> None:
+    def __init__(self, worker) -> None:
         self.worker = worker
-        self.include_web_server = include_web_server
-        self.web_server = None
 
     async def do_init(args):
         print(args)
@@ -26,9 +24,6 @@ class Service:
     @aiotools.server
     async def run_worker(self, loop, pidx, args):
         asyncio.create_task(self.worker.run(loop))
-
-        # if self.include_web_server:
-        #     await self.start_web_server(loop)
 
         stop_sig = yield
 
