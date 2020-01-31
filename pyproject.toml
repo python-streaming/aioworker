@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aioworker"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python async worker"
 authors = [
     "Marcos Schroh <schrohm@gmail.com>",
