@@ -12,7 +12,8 @@ async def sleeping(loop):
 
 async def on_client_connect(reader, writer):
     """
-    Read up tp 300 bytes of TCP. This could be parsed usign the HTTP protocol for example
+    Read up tp 300 bytes of TCP. This could be parsed usign
+    the HTTP protocol for example
     """
     data = await reader.read(300)
     print(f'TCP Server data received: {data} \n')

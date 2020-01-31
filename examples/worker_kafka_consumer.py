@@ -10,6 +10,12 @@ TOPIC = os.getenv('BOOTSTRAP_SERVERS', 'test-topic-worker')
 GROUP_ID = os.getenv('GROUP_ID', 'test-consumer-group')
 AUTO_OFFSET_RESET = os.getenv('AUTO_OFFSET_RESET', 'earliest')
 
+# Steps:
+#  1. pip install aiokafka
+#  2. make run-kafka-cluster
+#  3. make create-topic
+#  4. Execute `make send-event` to open a terminal with a prompt and type your events
+
 
 async def consume_from_kafka(loop):
     print('Task Consuming from kafka initiated...')

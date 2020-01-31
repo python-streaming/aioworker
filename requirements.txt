@@ -1,4 +1,3 @@
-aiokafka==0.5.2
 aiotools==0.8.5
 
 # Code quality

@@ -51,7 +51,7 @@ class Worker:
         if web_server_config is not None:
             self.client_connected_cb = web_server_config.pop("client_connected_cb")
             self.web_server_host = web_server_config.pop("host", self.WEB_SERVER_HOST)
-            self.web_server_port = web_server_config.pop("port", self.WEB_SERVER_HOST)
+            self.web_server_port = web_server_config.pop("port", self.WEB_SERVER_PORT)
 
         self.web_server_config = web_server_config
 

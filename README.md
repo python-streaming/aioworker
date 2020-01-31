@@ -6,6 +6,12 @@ A Python worker running over `asyncio`
 
 python 3.7+
 
+### Installation
+
+```bash
+pip install aioworker
+```
+
 ### Usage
 
 ```python
@@ -62,11 +68,11 @@ if __name__ == '__main__':
 
 ```
 
-## How to stop the worker
+### How to stop the worker
 
 `ctrl+c`
 
-## Default values
+### Default values
 
 | Variable | Default |
 |----------|---------|
@@ -74,7 +80,14 @@ if __name__ == '__main__':
 | TPC server port | 8888 |
 
 
-## Development
+### Examples
+
+1. [Hello world](https://github.com/python-streaming/aioworker/blob/master/examples/hello_world.py)
+2. [TCP Server](https://github.com/python-streaming/aioworker/blob/master/examples/worker_tcp_server.py)
+3. [Kafka Consumer](https://github.com/python-streaming/aioworker/blob/master/examples/worker_kafka_consumer.py)
+
+
+### Development
 
 1. Clone this repo
 2. Run `poetry install`
