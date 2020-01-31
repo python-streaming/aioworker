@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "aio-worker"
+name = "aioworker"
 version = "0.1.0"
 description = "Python async worker"
 authors = [
