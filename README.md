@@ -4,7 +4,7 @@ A Python worker running over `asyncio`
 
 ### Requirements
 
-python 3.7+, aiotools==0.8.5
+python 3.7+
 
 ### Usage
 
@@ -62,13 +62,21 @@ if __name__ == '__main__':
 
 ```
 
-## How to stop the worker:
+## How to stop the worker
 
 `ctrl+c`
 
-## Default values:
+## Default values
 
 | Variable | Default |
 |----------|---------|
 | TCP server host| 0.0.0.0|
 | TPC server port | 8888 |
+
+
+## Development
+
+1. Clone this repo
+2. Run `poetry install`
+3. Test using `./scripts/test`
+4. Lint automatically using `./scripts/lint`

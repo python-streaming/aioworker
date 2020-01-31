@@ -4,12 +4,10 @@ import signal
 
 import aiotools
 
-
 logger = logging.getLogger(__name__)
 
 
 class Service:
-
     def __init__(self, worker) -> None:
         self.worker = worker
 

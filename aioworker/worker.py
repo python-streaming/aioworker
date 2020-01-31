@@ -7,13 +7,16 @@ logger = logging.getLogger(__name__)
 
 class Worker:
 
-    INIT = 'INIT'
-    RUNNING = 'RUNNING'
-    STOP = 'STOP'
+    INIT = "INIT"
+    RUNNING = "RUNNING"
+    STOP = "STOP"
 
     def __init__(
-        self, *, tasks: typing.List[typing.Awaitable],
-        web_server_config: typing.Dict = None, timeout=0.1,
+        self,
+        *,
+        tasks: typing.List[typing.Awaitable],
+        web_server_config: typing.Dict = None,
+        timeout=0.1,
     ) -> None:
         """
         tasks (typing.List[Awaitables]): List of tasks to be run by the worker
@@ -41,9 +44,9 @@ class Worker:
         self._state = self.INIT
 
         if web_server_config is not None:
-            self.client_connected_cb = web_server_config.pop('client_connected_cb')
-            self.host = web_server_config.pop('host', '0.0.0.0')
-            self.port = web_server_config.pop('port', 8888)
+            self.client_connected_cb = web_server_config.pop("client_connected_cb")
+            self.host = web_server_config.pop("host", "0.0.0.0")
+            self.port = web_server_config.pop("port", 8888)
 
         self.web_server_config = web_server_config
 
@@ -60,7 +63,7 @@ class Worker:
             self._loop = loop
 
     async def run(self, loop) -> None:
-        logger.debug('Running worker...')
+        logger.debug("Running worker...")
         self._set_loop(loop)
         self._state = self.RUNNING
 
@@ -71,7 +74,7 @@ class Worker:
             asyncio.ensure_future(task(loop))
 
     async def on_start(self) -> None:
-        logger.debug('Starting.....')
+        logger.debug("Starting.....")
 
     async def stop(self) -> None:
         """
@@ -82,37 +85,38 @@ class Worker:
         await asyncio.sleep(2)
 
     async def on_stop(self) -> None:
-        logger.debug('Before Stoping.....')
+        logger.debug("Before Stoping.....")
 
     async def graceful_shutdown(self) -> None:
-        logger.debug('do_graceful_shutdown')
+        logger.debug("do_graceful_shutdown")
         await self.stop()
 
-        tasks = [
-            t for t in asyncio.all_tasks() if t is not
-            asyncio.current_task()
-        ]
+        tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
 
         for task in tasks:
             task.cancel()
 
-        logger.debug(f'Cancelling {len(tasks)} outstanding tasks')
+        logger.debug(f"Cancelling {len(tasks)} outstanding tasks")
 
         await self.stop_web_server()
 
     async def forced_shutdown(self) -> None:
-        logger.debug('do_forced_shutdown')
+        logger.debug("do_forced_shutdown")
         await self.stop_web_server()
 
     async def start_web_server(self) -> None:
         if self.web_server is None:
-            logger.debug('Starting web server')
+            logger.debug("Starting web server")
             self.web_server = await asyncio.start_server(
-                self.client_connected_cb, self.host, self.port,
-                loop=self.loop, **self.web_server_config)
+                self.client_connected_cb,
+                self.host,
+                self.port,
+                loop=self.loop,
+                **self.web_server_config,
+            )
 
     async def stop_web_server(self) -> None:
         if self.web_server is not None:
-            logger.debug('Stoping web server')
+            logger.debug("Stoping web server")
             self.web_server.close()
             await self.web_server.wait_closed()

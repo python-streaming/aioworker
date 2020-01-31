@@ -117,8 +117,7 @@ Session.vim
 # Auto-generated tag files
 tags
 
-
 .pytest_cache/
 
-
 .ipython/
+poetry.lock

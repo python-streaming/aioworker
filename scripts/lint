@@ -1,0 +1,13 @@
+#!/bin/sh -e
+
+export PREFIX=""
+if [ -d 'venv' ] ; then
+    export PREFIX="venv/bin/"
+elif [ -d 'venv' ] ; then
+    export PREFIX=".venv/bin/"
+fi
+
+set -x
+
+${PREFIX}isort --multi-line=3 --trailing-comma --force-grid-wrap=0 --combine-as --line-width 88 --recursive --apply aioworker tests
+${PREFIX}black aioworker tests
