@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import logging
 import typing
 
@@ -10,6 +11,9 @@ class Worker:
     INIT = "INIT"
     RUNNING = "RUNNING"
     STOP = "STOP"
+
+    WEB_SERVER_HOST = "0.0.0.0"
+    WEB_SERVER_PORT = 8888
 
     def __init__(
         self,
@@ -43,10 +47,11 @@ class Worker:
         self._loop = None
         self._state = self.INIT
 
+        web_server_config = copy.deepcopy(web_server_config)
         if web_server_config is not None:
             self.client_connected_cb = web_server_config.pop("client_connected_cb")
-            self.host = web_server_config.pop("host", "0.0.0.0")
-            self.port = web_server_config.pop("port", 8888)
+            self.web_server_host = web_server_config.pop("host", self.WEB_SERVER_HOST)
+            self.web_server_port = web_server_config.pop("port", self.WEB_SERVER_HOST)
 
         self.web_server_config = web_server_config
 
@@ -65,7 +70,7 @@ class Worker:
     async def run(self, loop) -> None:
         logger.debug("Running worker...")
         self._set_loop(loop)
-        self._state = self.RUNNING
+        await self.on_start()
 
         if self.web_server_config is not None:
             await self.start_web_server()
@@ -73,23 +78,32 @@ class Worker:
         for task in self.tasks:
             asyncio.ensure_future(task(loop))
 
+        self._state = self.RUNNING
+
     async def on_start(self) -> None:
         logger.debug("Starting.....")
 
-    async def stop(self) -> None:
+    async def _stop(self) -> None:
         """
-        Stop the current worker
+        Set worker state to STOP
         """
-        await self.on_stop()
-        self._state = self.STOP
         await asyncio.sleep(2)
+        self._state = self.STOP
 
     async def on_stop(self) -> None:
         logger.debug("Before Stoping.....")
 
     async def graceful_shutdown(self) -> None:
+        """
+        Shutdown the worker:
+
+            1. Execute on_stop
+            2. Cancel tasks
+            3. Stop web server if is running
+            4. Execute _stop (set worker state to STOP)
+        """
         logger.debug("do_graceful_shutdown")
-        await self.stop()
+        await self.on_stop()
 
         tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
 
@@ -99,18 +113,23 @@ class Worker:
         logger.debug(f"Cancelling {len(tasks)} outstanding tasks")
 
         await self.stop_web_server()
+        await self._stop()
 
     async def forced_shutdown(self) -> None:
+        """
+        Stop webserver if is running, async tasks are not stopped
+        """
         logger.debug("do_forced_shutdown")
         await self.stop_web_server()
+        await self._stop()
 
     async def start_web_server(self) -> None:
         if self.web_server is None:
             logger.debug("Starting web server")
             self.web_server = await asyncio.start_server(
                 self.client_connected_cb,
-                self.host,
-                self.port,
+                self.web_server_host,
+                self.web_server_port,
                 loop=self.loop,
                 **self.web_server_config,
             )
