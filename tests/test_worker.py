@@ -24,7 +24,7 @@ def test_create_worker_with_web_server(tasks, web_server_config):
 async def test_graceful_shutdown(event_loop, tasks):
     worker = Worker(tasks=tasks)
 
-    await worker.run(event_loop)
+    await worker._run(event_loop)
     assert worker.state == Worker.RUNNING
 
     await worker.graceful_shutdown()
@@ -35,7 +35,7 @@ async def test_graceful_shutdown(event_loop, tasks):
 async def test_run_with_web_server(event_loop, tasks, web_server_config):
     worker = Worker(tasks=[], web_server_config=web_server_config,)
 
-    await worker.run(event_loop)
+    await worker._run(event_loop)
     assert worker.state == Worker.RUNNING
     assert worker.web_server
 
@@ -48,7 +48,7 @@ async def test_run_with_web_server(event_loop, tasks, web_server_config):
 async def test_forced_shutdown(event_loop, web_server_config):
     worker = Worker(tasks=[], web_server_config=web_server_config,)
 
-    await worker.run(event_loop)
+    await worker._run(event_loop)
     assert worker.state == Worker.RUNNING
 
     await worker.forced_shutdown()

@@ -4,7 +4,7 @@ A Python worker running over `asyncio`
 
 ### Requirements
 
-python 3.7+
+python 3.8+
 
 ### Installation
 
@@ -27,9 +27,7 @@ async def task_1(loop):
 
 if __name__ == '__main__':
     #  Run the server using 1 worker processes.
-    Service(Worker(
-        tasks=[task_1],
-    )).run(num_workers=1)
+    Worker(tasks=[task_1]).run(workers=1)
 ```
 
 or run tasks and the webserver
@@ -59,13 +57,12 @@ async def on_client_connect(reader, writer):
 
 if __name__ == '__main__':
     # Run the server using 1 worker processes.
-    Service(Worker(
+    Worker(
         tasks=[sleeping],
         web_server_config={
             'client_connected_cb': on_client_connect,
         },
-    )).run(num_workers=1)
-
+    )).run(workers=1)
 ```
 
 ### How to stop the worker

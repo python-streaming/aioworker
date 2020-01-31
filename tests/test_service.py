@@ -1,10 +1,9 @@
-import os
 import signal
 from unittest import mock
 
-from aioworker import Service, Worker
-
 import pytest
+
+from aioworker import Service, Worker
 
 
 def test_create_service(worker):
@@ -25,19 +24,15 @@ def test_create_service(worker):
 
 
 @pytest.mark.asyncio
-async def test_stop_service():
+async def test_stop_worker():
+    worker = Worker(tasks=[])
+
     graceful_shutdown_mock = mock.AsyncMock("graceful_shutdown")
     forced_shutdown_mock = mock.AsyncMock("forced_shutdown")
-    worker = mock.Mock(
-        "worker",
-        graceful_shutdown=graceful_shutdown_mock,
-        forced_shutdown=forced_shutdown_mock,
-    )
+    with mock.patch(worker, "graceful_shutdown_mock", graceful_shutdown_mock) as m:
+        with mock.patch(worker, "forced_shutdown_mock", forced_shutdown_mock) as m2:
+            await worker.stop(signal.SIGINT)
+            graceful_shutdown_mock.assert_called_once()
 
-    service = Service(worker)
-
-    await service.stop(signal.SIGINT)
-    graceful_shutdown_mock.assert_called_once()
-
-    await service.stop(signal.SIGQUIT)
-    forced_shutdown_mock.assert_called_once()
+            await worker.stop(signal.SIGQUIT)
+            forced_shutdown_mock.assert_called_once()
