@@ -12,3 +12,4 @@ set -x
 ${PREFIX}pytest --cov-report term-missing --cov-report=xml:coverage.xml --cov=aioworker tests/
 ${PREFIX}black aioworker tests --check
 ${PREFIX}flake8 --max-line-length=88 aioworker/ tests/
+${PREFIX}mypy aioworker --ignore-missing-imports --no-strict-optional

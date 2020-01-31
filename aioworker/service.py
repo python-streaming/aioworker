@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import signal
+import typing
 
 import aiotools
 
@@ -11,16 +12,14 @@ class Service:
     def __init__(self, worker) -> None:
         self.worker = worker
 
-    async def do_init(args):
-        print(args)
+    async def do_init(args) -> None:
+        logger.debug(args)
 
-    def run(self, *args, num_workers=1, **kwargs):
-        aiotools.start_server(
-            self.run_worker, num_workers=num_workers,
-        )
+    def run(self, *args, num_workers: int = 1, **kwargs) -> None:
+        aiotools.start_server(self.run_worker, num_workers=num_workers)
 
     @aiotools.server
-    async def run_worker(self, loop, pidx, args):
+    async def run_worker(self, loop, pidx, args) -> typing.AsyncGenerator:
         asyncio.create_task(self.worker.run(loop))
 
         stop_sig = yield

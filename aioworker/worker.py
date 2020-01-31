@@ -14,7 +14,7 @@ class Worker:
     def __init__(
         self,
         *,
-        tasks: typing.List[typing.Awaitable],
+        tasks: typing.List[typing.Callable],
         web_server_config: typing.Dict = None,
         timeout=0.1,
     ) -> None:
@@ -39,7 +39,7 @@ class Worker:
         """
         self.tasks = tasks
         self.timeout = timeout
-        self.web_server = None
+        self.web_server: asyncio.AbstractServer = None
         self._loop = None
         self._state = self.INIT
 
@@ -55,7 +55,7 @@ class Worker:
         return self._loop
 
     @property
-    def state(self) -> bool:
+    def state(self) -> str:
         return self._state
 
     def _set_loop(self, loop) -> None:
