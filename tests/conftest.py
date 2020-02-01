@@ -24,18 +24,12 @@ async def client_connected_cb(reader, writer):
 
 @pytest.fixture
 def tasks():
-    return [
-        task_1,
-    ]
+    return [task_1]
 
 
 @pytest.fixture
 def web_server_config():
-    return {
-        "client_connected_cb": "",
-        "host": "127.0.0.1",
-        "port": 8000,
-    }
+    return {"client_connected_cb": "", "host": "127.0.0.1", "port": 8000}
 
 
 @pytest.yield_fixture()
