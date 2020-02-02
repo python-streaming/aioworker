@@ -2,6 +2,10 @@
 
 A Python worker running over `asyncio`
 
+[![Build Status](https://travis-ci.org/python-streaming/aioworker.svg?branch=master)](https://travis-ci.org/python-streaming/aioworker)
+![python version](https://img.shields.io/badge/python-3.8%2B-yellowgreen)
+[![License](https://img.shields.io/github/license/python-streaming/aioworker.svg)](https://github.com/python-streaming/aioworker/blob/master/LICENSE)
+
 ### Requirements
 
 python 3.8+
